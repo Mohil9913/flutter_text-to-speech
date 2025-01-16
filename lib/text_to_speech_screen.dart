@@ -22,9 +22,11 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
   }
 
   void _initializeTts() async {
+    // Get supported languages
     List<dynamic> languages = await _flutterTts.getLanguages;
-    log("Supported Languages: $languages");
+    log("\n\n\nSupported Languages: $languages");
 
+    // Set initial language
     await _flutterTts.setLanguage(_selectedLanguage);
   }
 
@@ -47,6 +49,10 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
     super.dispose();
   }
 
+  bool _isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +70,10 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
             TextField(
               controller: _textController,
               maxLines: 5,
+              textAlign: TextAlign.start,
+              textDirection: _isArabic(_textController.text)
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter text to speak...',
@@ -76,6 +86,7 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
                 DropdownMenuItem(value: 'en-US', child: Text('English (US)')),
                 DropdownMenuItem(value: 'hi-IN', child: Text('Hindi')),
                 DropdownMenuItem(value: 'gu-IN', child: Text('Gujarati')),
+                DropdownMenuItem(value: 'ar-SA', child: Text('Arabic')),
               ],
               onChanged: (value) {
                 setState(() {
